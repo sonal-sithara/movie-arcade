@@ -1,8 +1,8 @@
 <script lang="ts">
 	import EpisodeCard from './Episode/EpisodeCard.svelte';
-	import MovieCard from './MovieCard.svelte';
+	import MovieTvCard from './MovieTvCard.svelte';
 
-	export let movies: Array<object> = [];
+	export let movies: any[] = [];
 	export let title: string = '';
 	export let type: string = '';
 	export let episodes: Array<object> = [];
@@ -15,7 +15,7 @@
 		{#if isEpisode}
 			<EpisodeCard {details} />
 		{:else}
-			<MovieCard movie={details} {type} />
+			<MovieTvCard movie={details} {type} />
 		{/if}
 	{:else}
 		<p readonly class="btn loading">loading</p>

@@ -6,9 +6,12 @@
 	import { onMount } from 'svelte';
 	import Header from '../../../../components/Header.svelte';
 	import { Star, PlayCircle } from 'svelte-ionicons';
-	import MovieGrid from '../../../../components/MovieGrid.svelte';
+	import GridWrapper from '../../../../components/GridWrapper.svelte';
 	import GridTransition from '../../../../components/Transitions/GridTransition.svelte';
 	import SeasonBtnPanel from '../../../../components/Episode/SeasonBtnPanel.svelte';
+	import ContentWrapper from '../../../../components/ContentWrapper.svelte';
+	import * as AppConstant from '../../../../util/Constant';
+	import { getEpisodeDetails, getSimilar } from './request';
 
 	const details = data.details;
 	let similarMovies: any = [];
@@ -22,35 +25,25 @@
 		// jq('iframe').attr('src', frame);
 	}
 
-	$: if (seasonOption > 0 && data.type == 'tv') {
+	$: if (seasonOption) {
 		seasonEpisodes = [];
-		getSeasonDetails(seasonOption);
+		getEpisodeDetails(details.id, seasonOption, data.type)?.then((response) => {
+			episodeCount = response.episodeCount;
+			seasonEpisodes = response.episodeDetails;
+		});
 	}
 
-	const getSeasonDetails = async (seasonOption: number) => {
-		const res = await fetch(
-			`https://api.themoviedb.org/3/tv/${details.id}/season/${seasonOption}?api_key=9fcef2da31023302fa7427c5e3acac7d&language=en-US`
-		);
-		let seasonEpisodesRes = await res.json();
-		episodeCount = seasonEpisodesRes.episodes.length;
-		seasonEpisodes = seasonEpisodesRes.episodes.filter(
-			(episode: any) => new Date(episode.air_date) < new Date()
-		);
-	};
-
-	onMount(async () => {
-		const res = await fetch(
-			`https://api.themoviedb.org/3/${data.type}/${details.id}/similar?api_key=9fcef2da31023302fa7427c5e3acac7d&language=en-US&page=1`
-		);
-		let similarMoviesRes = await res.json();
-		similarMovies = similarMoviesRes.results;
+	onMount(() => {
+		getSimilar(data.type, details.id).then((response) => {
+			similarMovies = response;
+		});
 	});
 </script>
 
 <div>
 	<div
 		class="image_container"
-		style="background-image: url(https://image.tmdb.org/t/p/original/{details.backdrop_path});"
+		style="background-image: url({AppConstant.API_IMAGE_BASE_URL}original/{details.backdrop_path});"
 	>
 		<div class="imagemix">
 			<Header />
@@ -63,19 +56,19 @@
 							<label for="movie_video"><PlayCircle size="100" /></label>
 						</div>
 						<img
-							src="https://image.tmdb.org/t/p/w500/{details.poster_path}"
+							src="{AppConstant.API_IMAGE_BASE_URL}w500/{details.poster_path}"
 							class="max-w-sm rounded-lg shadow-2xl poster"
 							alt={details.title}
 						/>
 					</div>
 					<div class="ml-8">
-						<h1 class="text-5xl font-bold text-white flex items-center ss">
-							{data.type == 'tv' ? details.name : details.title}
+						<h1 class="text-5xl font-bold text-white flex items-center">
+							{data.type == AppConstant.TYPE_TV ? details.name : details.title}
 						</h1>
 
 						<div class="opacity-60 mt-1 text-md">
 							{new Date(
-								data.type == 'tv' ? details.first_air_date : details.release_date
+								data.type == AppConstant.TYPE_TV ? details.first_air_date : details.release_date
 							).getFullYear()}
 						</div>
 
@@ -100,35 +93,36 @@
 			</div>
 		</div>
 	</div>
-	<div class="container mx-auto mt-6">
-		{#if data.type == 'tv'}
+	<ContentWrapper>
+		{#if data.type == AppConstant.TYPE_TV}
 			<SeasonBtnPanel {details} bind:seasonOption />
 			<GridTransition {seasonOption}>
-				<MovieGrid
+				<GridWrapper
 					isEpisode={true}
 					episodes={seasonEpisodes}
 					title={seasonEpisodes.length + '/' + episodeCount + ' Episodes'}
 				/>
 			</GridTransition>
 		{/if}
-		<MovieGrid
+
+		<GridWrapper
 			movies={similarMovies}
 			type={data.type}
-			title={data.type === 'tv' ? 'Similar TV Shows' : 'Similar Movies'}
+			title={data.type === AppConstant.TYPE_TV ? 'Similar TV Shows' : 'Similar Movies'}
 		/>
-	</div>
+	</ContentWrapper>
 
 	<!-- //iframe -->
 	<input type="checkbox" bind:checked={isVideoPlay} id="movie_video" class="modal-toggle" />
 	<label for="movie_video" class="modal cursor-pointer">
 		<label class="modal-box max-w-4xl relative" for="">
-			{#if '' == data.videoId}
+			{#if AppConstant.EMPTY_STRING == data.videoId}
 				<h1>Video Unavailable</h1>
 			{:else}
 				<iframe
 					class="w-full aspect-video videoframe"
-					src="https://www.youtube.com/embed/{data.videoId}"
-					title={data.type == 'tv' ? details.name : details.title}
+					src="{AppConstant.YOUTUBE_URL}{data.videoId}"
+					title={data.type == AppConstant.TYPE_TV ? details.name : details.title}
 					frameborder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 					allowfullscreen

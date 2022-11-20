@@ -1,29 +1,31 @@
 <script lang="ts">
 	import Pagination from '../components/Pagination.svelte';
-	import MovieGrid from '../components/MovieGrid.svelte';
+	import GridWrapper from '../components/GridWrapper.svelte';
 	import type { PageData } from './$types';
 	import Hero from '../components/Hero.svelte';
+	import ContentWrapper from '../components/ContentWrapper.svelte';
+	import * as AppConstant from '../util/Constant';
 	export let data: PageData;
 </script>
 
-<div class="">
+<div>
 	<Hero trendingMovie={data.trendingMovies} />
-	<div class="container mx-auto mt-6">
-		<MovieGrid
+	<ContentWrapper>
+		<GridWrapper
 			movies={data.trendingMovies}
-			type={data.trendingMovies.at(-1).media_type}
+			type={AppConstant.TYPE_MOVIE}
 			title={'Trending Movies'}
 		/>
-		<MovieGrid
+		<GridWrapper
 			movies={data.trendingTvShows}
-			type={data.trendingTvShows.at(-1).media_type}
+			type={AppConstant.TYPE_TV}
 			title={'Trending TV Shows'}
 		/>
-		<MovieGrid
+		<GridWrapper
 			movies={data.popularMovies}
-			type={data.popularMovies.at(-1).media_type}
+			type={AppConstant.TYPE_MOVIE}
 			title={'Popular Movies'}
 		/>
 		<Pagination />
-	</div>
+	</ContentWrapper>
 </div>

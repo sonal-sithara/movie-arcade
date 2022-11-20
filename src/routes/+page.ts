@@ -1,20 +1,22 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
+import { PUBLIC_API_KEY } from '$env/static/public';
+import * as AppConstant from '../util/Constant';
 
 export const load: PageLoad = async ({ fetch }) => {
 	const trendingMovieRes = await fetch(
-		'https://api.themoviedb.org/3/trending/movie/week?api_key=9fcef2da31023302fa7427c5e3acac7d&language=en-US&page=1'
+		`${AppConstant.API_BASE_URL}trending/movie/week?api_key=${PUBLIC_API_KEY}&language=en-US&page=1`
 	);
 	const trendingTvShowRes = await fetch(
-		'https://api.themoviedb.org/3/trending/tv/week?api_key=9fcef2da31023302fa7427c5e3acac7d&language=en-US&page=1'
+		`${AppConstant.API_BASE_URL}trending/tv/week?api_key=${PUBLIC_API_KEY}&language=en-US&page=1`
 	);
 	const popularMovieRes = await fetch(
-		'https://api.themoviedb.org/3/movie/popular?api_key=9fcef2da31023302fa7427c5e3acac7d&language=en-US&page=1'
+		`${AppConstant.API_BASE_URL}movie/popular?api_key=${PUBLIC_API_KEY}&language=en-US&page=1`
 	);
 
-	const trendingMovies = await trendingMovieRes.json();
-	const trendingTvShows = await trendingTvShowRes.json();
-	const popularMovies = await popularMovieRes.json();
+	const trendingMovies: any = await trendingMovieRes.json();
+	const trendingTvShows: any = await trendingTvShowRes.json();
+	const popularMovies: any = await popularMovieRes.json();
 
 	return {
 		trendingMovies: trendingMovies.results,

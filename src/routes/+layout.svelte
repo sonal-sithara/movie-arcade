@@ -7,9 +7,9 @@
 
 <div>
 	<main>
-		<PageTransition url={$page.url}>
-			<slot />
-			<Footer />
-		</PageTransition>
+		<!-- <PageTransition url={$page.url}> -->
+		<slot />
+		<Footer />
+		<!-- </PageTransition> -->
 	</main>
 </div>
