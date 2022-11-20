@@ -14,6 +14,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
+		"@types/jquery": "^3.5.14",
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"autoprefixer": "^10.4.13",
@@ -35,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"daisyui": "^2.40.1"
+		"daisyui": "^2.40.1",
+		"jquery": "^3.6.1"
 	}
 }

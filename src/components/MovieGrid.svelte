@@ -1,14 +1,22 @@
 <script lang="ts">
+	import EpisodeCard from './Episode/EpisodeCard.svelte';
 	import MovieCard from './MovieCard.svelte';
 
-	export let movies: any;
-	export let title: string;
+	export let movies: Array<object> = [];
+	export let title: string = '';
+	export let type: string = '';
+	export let episodes: Array<object> = [];
+	export let isEpisode: boolean = false;
 </script>
 
 <h1 class="text-2xl">{title}</h1>
 <div class="mt-6 mb-16 grid grid-cols-7 gap-4">
-	{#each movies as movie, i}
-		<MovieCard {movie} />
+	{#each isEpisode ? episodes : movies as details, i}
+		{#if isEpisode}
+			<EpisodeCard {details} />
+		{:else}
+			<MovieCard movie={details} {type} />
+		{/if}
 	{:else}
 		<p readonly class="btn loading">loading</p>
 	{/each}

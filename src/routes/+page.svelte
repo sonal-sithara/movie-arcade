@@ -9,9 +9,21 @@
 <div class="">
 	<Hero trendingMovie={data.trendingMovies} />
 	<div class="container mx-auto mt-6">
-		<MovieGrid movies={data.trendingMovies} title={'Trending Movies'} />
-		<MovieGrid movies={data.trendingTvShows} title={'Trending TV Shows'} />
-		<MovieGrid movies={data.popularMovies} title={'Popular Movies'} />
+		<MovieGrid
+			movies={data.trendingMovies}
+			type={data.trendingMovies.at(-1).media_type}
+			title={'Trending Movies'}
+		/>
+		<MovieGrid
+			movies={data.trendingTvShows}
+			type={data.trendingTvShows.at(-1).media_type}
+			title={'Trending TV Shows'}
+		/>
+		<MovieGrid
+			movies={data.popularMovies}
+			type={data.popularMovies.at(-1).media_type}
+			title={'Popular Movies'}
+		/>
 		<Pagination />
 	</div>
 </div>
